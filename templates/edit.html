@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit a project
+{% endblock %}
+    
+{% block main %}
+    <form action="/edit/{{ project.id }}" method="POST">
+        <div class="form-group">
+            <label for="client">Client: </label>
+            <select name="client_id">
+                {% for client in clients %}
+                    {% if client.name == project.client %}
+                        <option value="{{ client.id }}" selected>{{ client.name }}</option> 
+                    {% else %}
+                        <option value="{{ client.id }}" >{{ client.name }}</option> 
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="topic">Topic: </label>
+            <input type="text" name="topic" placeholder="Topic" class="form-control" value="{{ project.topic }}"\>
+        </div>
+        <div class="form-group">
+            <label for="due_date">Due date: </label>
+            <input type="date" name="due_date" placeholder="Due date" class="form-control" value="{{ project.due_date }}"\>
+        </div>
+        <div class="form-group">
+            <label for="status">Status: </label>
+            <select name="status_id">
+                {% for status in statuses %}
+                    {% if status.name == project.status %}
+                        <option value="{{ status.id }}" selected>{{ status.name }}</option> 
+                    {% else %}
+                        <option value="{{ status.id }}" >{{ status.name }}</option> 
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="offer_date">Offer date: </label>
+            <input type="date" name="offer_date" placeholder="Offer date" class="form-control" \>
+        </div>
+        <div class="form-group">
+            <label for="offer_date">Price: </label>
+            <input type="number" step="0.01" name="price" placeholder="Offer Price" class="form-control" \>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Edit Project</button>
+        <a href="/" class="btn btn-danger">Cancel</a>
+    </form>
+{% endblock %}

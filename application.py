@@ -16,10 +16,107 @@ app.secret_key = b'\x8e&L\x8c\xf4\xa7\xd0geS%\x1a\xe7\x9b\xb3.'
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_template("index.html")
+    if request.method == 'POST':
+        filt = request.form.get("filter")
+        if filt == "open":
+            return redirect(url_for('index'))
+        elif filt == "offered":
+            rows = rows2dict(engine.execute("""SELECT p.id AS id, c.name AS client, p.topic AS topic, p.open_date AS open_date, p.due_date AS due_date, s.name AS status
+                                            FROM projects p 
+                                            INNER JOIN clients c ON p.client_id = c.id 
+                                            INNER JOIN status s ON p.status_id = s.id
+                                            WHERE status = "offered"
+                                            ORDER BY offer_date"""))
+            return render_template("index.html", projects=rows, filter=filt)
+        elif filt == "ordered":
+            rows = rows2dict(engine.execute("""SELECT p.id AS id, c.name AS client, p.topic AS topic, p.open_date AS open_date, p.due_date AS due_date, s.name AS status
+                                            FROM projects p 
+                                            INNER JOIN clients c ON p.client_id = c.id 
+                                            INNER JOIN status s ON p.status_id = s.id
+                                            WHERE status = "ordered"
+                                            ORDER BY offer_date"""))
+            return render_template("index.html", projects=rows, filter=filt)
+    else:
+        filt = "all"
+        rows = rows2dict(engine.execute("""SELECT p.id AS id, c.name AS client, p.topic AS topic, p.open_date AS open_date, p.due_date AS due_date, s.name AS status
+                                        FROM projects p 
+                                        INNER JOIN clients c ON p.client_id = c.id 
+                                        INNER JOIN status s ON p.status_id = s.id
+                                        WHERE status = "open"
+                                        ORDER BY due_date"""))
+        return render_template("index.html", projects=rows, filter=filt)
+
+@app.route('/add', methods=['GET', 'POST'])
+@login_required
+def add():
+    if request.method == 'POST':
+        if not request.form.get("client"):
+            return error("must provide a client", 400)
+        elif not request.form.get("topic"):
+            return error("must provide a topic", 400)
+        elif not request.form.get("due_date"):
+            return error("must select a due date", 400)
+        else:
+            engine.execute("INSERT INTO projects (id, client_id, topic, due_date) VALUES (NULL, :client, :topic, :due_date)",
+                           client=request.form.get("client"),
+                           topic=request.form.get("topic"),
+                           due_date=request.form.get("due_date"))
+            return redirect(url_for('index'))
+    else:
+        rows = rows2dict(engine.execute("SELECT * FROM clients"))
+        return render_template("add.html", clients=rows)
+
+@app.route('/client', methods=['GET', 'POST'])
+@login_required
+def client():
+    if request.method == 'POST':
+        if not request.form.get("name"):
+            return error("must provide a name for client", 400)
+        else:
+            rows = rows2dict(engine.execute("SELECT * FROM clients WHERE name = :name", name=request.form.get("name")))
+            if rows:
+                return error("client already exists", 400)
+            else:
+                engine.execute("INSERT INTO clients (name) VALUES (:name)",
+                               name=request.form.get("name"))
+            return redirect(url_for('index'))
+    else:
+        return render_template("client.html")
+
+@app.route('/edit/<project_id>', methods=['GET', 'POST'])
+@login_required
+def edit(project_id):
+    if request.method == 'POST':
+        if not request.form.get("client_id"):
+            return error("must provide a client", 400)
+        elif not request.form.get("topic"):
+            return error("must provide a topic", 400)
+        elif not request.form.get("due_date"):
+            return error("must select a due date", 400)
+        else:
+            engine.execute("""UPDATE projects SET client_id=:client_id, topic=:topic, due_date=:due_date, status_id=:status_id, offer_date=:offer_date, offer_price=:offer_price 
+                           WHERE id=:project_id""",
+                           client_id=request.form.get("client_id"),
+                           topic=request.form.get("topic"),
+                           due_date=request.form.get("due_date"),
+                           status_id=request.form.get("status_id"),
+                           offer_date=request.form.get("offer_date"),
+                           offer_price=request.form.get("offer_price"),
+                           project_id=project_id)            
+            return redirect(url_for('index'))
+    else:
+        rows = rows2dict(engine.execute("""SELECT p.id AS id, c.name AS client, p.topic AS topic, p.open_date AS open_date, p.due_date AS due_date, s.name AS status, s.id AS status_id
+                                        FROM projects p 
+                                        INNER JOIN clients c ON p.client_id = c.id 
+                                        INNER JOIN status s ON p.status_id = s.id
+                                        WHERE p.id = :project_id
+                                        ORDER BY due_date""", project_id=project_id))
+        statuses = rows2dict(engine.execute("SELECT * FROM status"))
+        clients = rows2dict(engine.execute("SELECT * FROM clients"))
+        return render_template('edit.html', project=rows[0], statuses=statuses, clients=clients)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

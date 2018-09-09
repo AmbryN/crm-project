@@ -5,5 +5,47 @@
 {% endblock %}
     
 {% block main %}
-   
+    <form action="/" method='POST'>
+        <div class="form-check form-check-inline">
+            <input type="radio" id="open" value="open" name="filter" class="form-check-input"/>
+            <label for="open" class="form-check-label">Open</label>
+        </div>
+        <div class="form-check form-check-inline"> 
+            <input type="radio" id="offered" value="offered" name="filter" class="form-check-input"/>
+            <label for="offered" class="form-check-label">Offered</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input type="radio" id="ordered" value="ordered" name="filter" class="form-check-input"/>
+            <label for="ordered" class="form-check-label">Ordered</label>
+        </div>
+        <button type="submit" class="btn">Filter</button>
+    </form>
+    <table class="table table-striped">
+        <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Client</th>
+                    <th>Topic</th>
+                    <th>Date opened</th>
+                    <th>Due date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+        </thead>
+        <tbody>
+                {% if projects %}
+                    {% for project in projects %}
+                    <tr>
+                        <td>{{ project.id }}</td>
+                        <td>{{ project.client }}</td>
+                        <td>{{ project.topic }}</td>
+                        <td>{{ project.open_date }}</td>
+                        <td>{{ project.due_date }}</td>
+                        <td>{{ project.status }}</td>
+                        <td><a class="nav-item nav-link" href="{{ url_for('edit', project_id = project.id) }}">Edit</a></td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+        </tbody>
+    </table>
 {% endblock %}

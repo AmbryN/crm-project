@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Add a client
+{% endblock %}
+    
+{% block main %}
+    <form action="/client" method="POST">
+        <div class="form-group">
+            <label for="name">Client name: </label>
+            <input type="text" name="name" placeholder="Topic" class="form-control" \>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Add a client</button>
+    </form>
+{% endblock %}
