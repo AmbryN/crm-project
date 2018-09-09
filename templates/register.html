@@ -5,13 +5,16 @@
 {% endblock %}
     
 {% block main %}
-    <form action="/login" method="POST">
+    <form action="/register" method="POST">
         <div class="form-group">
             <input type="text" autocomplete="off" autofocus name="username" placeholder="Username" class="form-control" \>
         </div>
         <div class="form-group">
             <input type="password" name="password" placeholder="Password" class="form-control" \>
         </div class="form-group">
-        <button type="submit" class="btn btn-primary">Log In</button>
+        <div class="form-group">
+            <input type="password" name="confirmation" placeholder="Confirm your password" class="form-control" \>
+        </div class="form-group">
+        <button type="submit" class="btn btn-primary">Register</button>
     </form>
 {% endblock %}

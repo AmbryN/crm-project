@@ -3,10 +3,10 @@
 {% block title %}
     Error
 {% endblock %}
+    
+{% block main %}
     <div>
-        <h1>The server encountered an error :</h1>
+        <h1>The server encountered an error</h1>
         <h2>Error {{ code }} : "{{ message }}"</h2>
     </div>
-{% block main %}
-   
 {% endblock %}
