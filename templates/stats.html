@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Statistics
+{% endblock %}
+    
+{% block main %}
+    <form action="/stats" method='post'>
+        <div class="form-group">
+            <label for="client">Client: </label>
+            <select name="client_id">
+                <option value="all">ALL</option>
+                {% for client in clients %}
+                    {% if client.id|int() == selected_client_id|int() %}
+                        <option value="{{ client.id }}" selected>{{ client.name }}</option> 
+                    {% else %}
+                        <option value="{{ client.id }}" >{{ client.name }}</option> 
+                    {% endif %}
+                {% endfor %}
+            </select>
+            <button type="submit" class="btn">Show statistics</button>
+        </div>
+    </form>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Number of open projects</th>
+                <th>Number of offers</th>
+                <th>Number of orders</th>
+                <th>Conversion rate</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ projects.open }}</td>
+                <td>{{ projects.offers }}</td>
+                <td>{{ projects.orders }}</td>
+                <td>{{ projects.conversion }}</td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}

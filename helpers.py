@@ -30,3 +30,13 @@ def rows2dict(rows):
         row_as_dict = dict(row)
         l.append(row_as_dict)
     return l
+
+def row2dict(rows):
+    """Converts the ResultProxy from SQLAlchemy to a dict
+    https://stackoverflow.com/questions/1958219/convert-sqlalchemy-row-object-to-python-dict
+    """
+    l = []
+    for row in rows:
+        row_as_dict = dict(row)
+        l.append(row_as_dict)
+    return l[0]

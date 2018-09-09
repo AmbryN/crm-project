@@ -1,7 +1,8 @@
 import os
 
+from math import trunc
 from flask import Flask, request, render_template, session, redirect, url_for
-from helpers import error, login_required, eur, rows2dict
+from helpers import error, login_required, eur, rows2dict, row2dict
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy import create_engine, MetaData
 
@@ -165,3 +166,39 @@ def register():
             return render_template("index.html")
     else:
         return render_template("register.html")
+
+@app.route('/stats', methods=['GET', 'POST'])
+def stats():
+    selected_client_id = '%'
+    if request.method == 'POST':
+        if request.form.get("client_id") == "all":
+            redirect(url_for("stats"))
+        else:
+            selected_client_id = request.form.get("client_id")
+
+    open_projects = engine.execute("""SELECT COUNT(*) AS open_count
+                                            FROM projects 
+                                            WHERE status_id = 1
+                                            AND client_id LIKE :selected_client_id""", selected_client_id=selected_client_id).first()
+    offers = engine.execute("""SELECT COUNT(*) AS offer_count
+                                        FROM projects 
+                                        WHERE status_id = 2
+                                        AND client_id LIKE :selected_client_id""", selected_client_id=selected_client_id).first()
+    orders = engine.execute("""SELECT COUNT(*) AS order_count
+                                        FROM projects 
+                                        WHERE status_id = 3
+                                        AND client_id LIKE :selected_client_id""", selected_client_id=selected_client_id).first()
+    if (offers["offer_count"] + orders["order_count"]) == 0:
+        conversion = "N/A"
+    else:
+        conversion = trunc(orders["order_count"] / (offers["offer_count"] + orders["order_count"]) * 100) / 100
+    
+    projects = {
+        "open": open_projects["open_count"],
+        "offers": offers["offer_count"],
+        "orders": orders["order_count"],
+        "conversion": conversion
+    }
+        
+    clients = rows2dict(engine.execute("SELECT id, name FROM clients"))
+    return render_template("stats.html", projects=projects, clients=clients, selected_client_id=selected_client_id)
