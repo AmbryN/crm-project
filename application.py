@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, request, render_template, session, redirect, url_for
 from helpers import error, login_required, eur, rows2dict
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -10,8 +12,9 @@ app = Flask(__name__)
 engine = create_engine('sqlite:///crm.db', convert_unicode=True)
 metadata = MetaData(bind=engine)
 
-# Secret key for session (TO KEEP SECRET)
-app.secret_key = b'\x8e&L\x8c\xf4\xa7\xd0geS%\x1a\xe7\x9b\xb3.'
+# Secret key for session
+SECRET_KEY = os.environ.get("SECRET_KEY", "")
+app.secret_key = SECRET_KEY
 
 # Ensure templates are auto-reloaded
 app.config["TEMPLATES_AUTO_RELOAD"] = True
