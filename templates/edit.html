@@ -40,11 +40,11 @@
         </div>
         <div class="form-group">
             <label for="offer_date">Offer date: </label>
-            <input type="date" name="offer_date" placeholder="Offer date" class="form-control" \>
+            <input type="date" name="offer_date" placeholder="Offer date" value="{{ project.offer_date }}" class="form-control" \>
         </div>
         <div class="form-group">
             <label for="offer_date">Price: </label>
-            <input type="number" step="0.01" name="price" placeholder="Offer Price" class="form-control" \>
+            <input type="number" step="0.01" name="offer_price" placeholder="Offer Price"  value="{{ project.offer_price }}"class="form-control" \>
         </div>
 
         <button type="submit" class="btn btn-primary">Edit Project</button>

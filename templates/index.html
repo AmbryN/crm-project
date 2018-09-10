@@ -27,21 +27,33 @@
                     <th>Client</th>
                     <th>Topic</th>
                     <th>Date opened</th>
-                    <th>Due date</th>
+                    {% if filter == "open" %}
+                        <th>Due date</th>
+                    {% endif %}
                     <th>Status</th>
+                    {% if filter == "offered" or filter == "ordered" %}
+                            <th>Offered on</th>
+                            <th>Offer price</th>
+                    {% endif %}
                     <th>Actions</th>
                 </tr>
         </thead>
         <tbody>
                 {% if projects %}
                     {% for project in projects %}
-                    <tr>
+                    <tr></tr>
                         <td>{{ project.id }}</td>
                         <td>{{ project.client }}</td>
                         <td>{{ project.topic }}</td>
                         <td>{{ project.open_date }}</td>
+                        {% if filter == "open" %}
                         <td>{{ project.due_date }}</td>
+                        {% endif %}
                         <td>{{ project.status }}</td>
+                        {% if filter == "offered" or filter == "ordered" %}
+                            <td>{{ project.offer_date }}</td>
+                            <td>{{ project.offer_price | eur }}</td>
+                        {% endif %}
                         <td><a class="nav-item nav-link" href="{{ url_for('edit', project_id = project.id) }}">Edit</a></td>
                     </tr>
                     {% endfor %}

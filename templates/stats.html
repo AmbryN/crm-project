@@ -24,9 +24,11 @@
     <table class="table table-striped">
         <thead>
             <tr>
-                <th>Number of open projects</th>
-                <th>Number of offers</th>
-                <th>Number of orders</th>
+                <th>Nb of open projects</th>
+                <th>Nb of project offered</th>
+                <th>Mean offer value</th>
+                <th>Nb of orders</th>
+                <th>Mean order value</th>
                 <th>Conversion rate</th>
             </tr>
         </thead>
@@ -34,7 +36,13 @@
             <tr>
                 <td>{{ projects.open }}</td>
                 <td>{{ projects.offers }}</td>
+                <td>{{ projects.mean_offer | eur if (projects.mean_offer != None) else "N/A"}}</td>
                 <td>{{ projects.orders }}</td>
+                {% if projects.mean_order != none %}
+                    <td>{{ projects.mean_order | eur if (projects.mean_order != None) else "N/A"}}</td>
+                {% else %}
+                    <td>N/A</td>
+                {% endif %}
                 <td>{{ projects.conversion }}</td>
             </tr>
         </tbody>

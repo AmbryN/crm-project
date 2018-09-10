@@ -19,7 +19,8 @@ def login_required(f):
 
 def eur(value):
     """Format a value as EUR."""
-    return f"{value:,.2f}€"
+    return f"{value} €"
+    
 
 def rows2dict(rows):
     """Converts the ResultProxy from SQLAlchemy to a dict
@@ -33,6 +34,7 @@ def rows2dict(rows):
 
 def row2dict(rows):
     """Converts the ResultProxy from SQLAlchemy to a dict
+    when only one row is returned
     https://stackoverflow.com/questions/1958219/convert-sqlalchemy-row-object-to-python-dict
     """
     l = []
