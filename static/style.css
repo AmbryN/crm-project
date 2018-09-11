@@ -8,3 +8,15 @@ main
 {
     text-align: center;
 }
+
+.late
+{
+    color: red;
+}
+
+#mychart
+{
+    height: 5px;
+    width: 5px;
+    padding-bottom: 15px;
+}

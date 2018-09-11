@@ -1,6 +1,6 @@
 import os
 
-from flask import Flask, request, render_template, session, redirect, url_for
+from flask import Flask, request, render_template, session, redirect, url_for, jsonify
 from helpers import error, login_required, eur, rows2dict, row2dict
 from math import trunc
 from sqlalchemy import create_engine, MetaData
@@ -31,7 +31,9 @@ def index():
     filt = "open"
     if request.method == 'POST':
         filt = request.form.get("filter")
-        if filt == "offered":
+        if filt == "open":
+            return redirect(url_for('index'))
+        elif filt == "offered":
             # Get all the projects with status offered
             rows = rows2dict(engine.execute("""SELECT p.id AS id, c.name AS client, p.topic AS topic, p.open_date AS open_date, p.offer_date, p.offer_price, s.name AS status
                                             FROM projects p 
@@ -47,6 +49,14 @@ def index():
                                             INNER JOIN status s ON p.status_id = s.id
                                             WHERE status = "ordered"
                                             ORDER BY offer_date"""))
+        elif filt == "cancelled":
+            # Get all the projects with status ordered
+            rows = rows2dict(engine.execute("""SELECT p.id AS id, c.name AS client, p.topic AS topic, p.open_date AS open_date, s.name AS status
+                                            FROM projects p 
+                                            INNER JOIN clients c ON p.client_id = c.id 
+                                            INNER JOIN status s ON p.status_id = s.id
+                                            WHERE status = "cancelled"
+                                            ORDER BY open_date"""))
     else:
         # Get all the projects with status open
         rows = rows2dict(engine.execute("""SELECT p.id AS id, c.name AS client, p.topic AS topic, p.open_date AS open_date, p.due_date AS due_date, s.name AS status
@@ -215,7 +225,7 @@ def stats():
     if (offers["offer_count"] == 0):
         conversion = "N/A"
     else:
-        conversion = trunc(orders["order_count"] / offers["offer_count"] * 100) / 100
+        conversion = trunc(orders["order_count"] / (offers["offer_count"] + orders["order_count"]) * 100) / 100
     
     # Create a dict with all the results
     projects = {

@@ -11,13 +11,9 @@ It allows users to:
 * To log in / logout
 * Create a new client
 * Create / Edit a project
-* View all projects and filter by statuses (open, offered, ordered)
+* View all projects and filter by statuses (open, offered, ordered, cancelled)
+* See projects which due date has been exceeded 
 * View statistics (Global and per client number of projects that are open / offered / ordered, conversion rates and mean value of offers / orders)
-
-Coming soon:
-* View cancelled projects
-* Delete a project
-* See late open projects 
 
 ## Getting Started
 

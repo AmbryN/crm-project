@@ -18,6 +18,10 @@
             <input type="radio" id="ordered" value="ordered" name="filter" class="form-check-input"/>
             <label for="ordered" class="form-check-label">Ordered</label>
         </div>
+        <div class="form-check form-check-inline">
+            <input type="radio" id="cancelled" value="cancelled" name="filter" class="form-check-input"/>
+            <label for="cancelled" class="form-check-label">Cancelled</label>
+        </div>
         <button type="submit" class="btn">Filter</button>
     </form>
     <table class="table table-striped">
@@ -38,26 +42,30 @@
                     <th>Actions</th>
                 </tr>
         </thead>
-        <tbody>
+        <tbody id="body">
                 {% if projects %}
                     {% for project in projects %}
-                    <tr></tr>
+                    <tr>
                         <td>{{ project.id }}</td>
                         <td>{{ project.client }}</td>
                         <td>{{ project.topic }}</td>
                         <td>{{ project.open_date }}</td>
                         {% if filter == "open" %}
-                        <td>{{ project.due_date }}</td>
+                        <td class="duedate">{{ project.due_date }}</td>
                         {% endif %}
                         <td>{{ project.status }}</td>
                         {% if filter == "offered" or filter == "ordered" %}
                             <td>{{ project.offer_date }}</td>
                             <td>{{ project.offer_price | eur }}</td>
                         {% endif %}
-                        <td><a class="nav-item nav-link" href="{{ url_for('edit', project_id = project.id) }}">Edit</a></td>
+                        <td><a class="btn btn-primary" href="{{ url_for('edit', project_id = project.id) }}">Edit</a></td>
                     </tr>
                     {% endfor %}
                 {% endif %}
         </tbody>
     </table>
+{% endblock %}
+
+{% block script %}
+    <script src="{{ url_for('static', filename='index.js') }}"></script>
 {% endblock %}

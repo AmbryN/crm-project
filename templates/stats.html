@@ -21,6 +21,7 @@
             <button type="submit" class="btn">Show statistics</button>
         </div>
     </form>
+    <canvas id="mychart"></canvas>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -35,9 +36,9 @@
         <tbody>
             <tr>
                 <td>{{ projects.open }}</td>
-                <td>{{ projects.offers }}</td>
+                <td id="offers">{{ projects.offers }}</td>
                 <td>{{ projects.mean_offer | eur if (projects.mean_offer != None) else "N/A"}}</td>
-                <td>{{ projects.orders }}</td>
+                <td id="orders">{{ projects.orders }}</td>
                 {% if projects.mean_order != none %}
                     <td>{{ projects.mean_order | eur if (projects.mean_order != None) else "N/A"}}</td>
                 {% else %}
@@ -47,4 +48,9 @@
             </tr>
         </tbody>
     </table>
+{% endblock %}
+
+{% block script %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script> 
+    <script src="{{ url_for('static', filename='stats.js') }}"></script>
 {% endblock %}
